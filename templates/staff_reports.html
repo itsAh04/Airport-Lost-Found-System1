@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="nav_staff_reports">Staff Reports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* 🚨 القياسات الأصلية للسايدبار تبعك 🚨 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+            .sidebar ul {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                margin: 0;
+                padding: 0 0 20px 0;
+            }
+
+        .bottom-menu {
+            margin-top: auto;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            margin: 2px 10px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .sidebar ul li a.active {
+                background: var(--secondary);
+                color: var(--primary);
+                font-weight: bold;
+                border-radius: 10px;
+            }
+
+        .table-container {
+            background: var(--card-bg, #ffffff);
+            color: var(--text-color, #333333);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-top: 20px;
+            overflow-x: auto;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+            text-align: right;
+        }
+
+        body[data-lang="en"] .admin-table {
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color, #f0f0f0);
+            vertical-align: middle;
+            font-size: 14px;
+            color: var(--text-color, #333333);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+        }
+
+        .status-update-select {
+            padding: 8px;
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 8px;
+            background-color: var(--bg-color, #f9f9f9);
+            color: var(--text-color, #333);
+            font-size: 13px;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .btn-save-update {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .btn-save-update:hover {
+                background-color: #219653;
+                transform: scale(1.02);
+            }
+
+        .logo-img {
+            max-height: 50px;
+            width: auto;
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';" alt="Logo" class="logo-img">
+            <h2><span data-i18n="staff_portal_title">بوابة الموظف</span><br><span style="font-size: 13px; color: white; font-weight:500;">EMP-101</span></h2>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('staff_dashboard') }}" data-i18n="nav_staff_map"><i class="fa-solid fa-map-location-dot"></i> الخريطة والإنذارات</a></li>
+            <li><a href="{{ url_for('staff_reports') }}" class="active" data-i18n="nav_staff_reports"><i class="fa-solid fa-list-check"></i> سجل العمليات</a></li>
+
+            <div class="bottom-menu">
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+            <li><a href="#" class="theme-toggle"><i class="fa-solid fa-moon"></i> الوضع الليلي</a></li>
+            <li><a href="#" class="lang-toggle"><i class="fa-solid fa-globe"></i> English</a></li>
+            <li><a href="{{ url_for('logout') }}" style="color: #ff7675;"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-i18n="btn_logout">تسجيل خروج</span></a></li>
+    </div>
+    </ul>
+    </div>
+
+    <div class="main-content">
+        <header class="admin-header" style="border-right: 5px solid var(--success); padding-right: 20px; background: var(--card-bg, #fff); color: var(--text-color, #333); border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <div>
+                <h2 data-i18n="staff_rep_header" style="margin: 0; font-weight: 800;">سجل العمليات والتقارير</h2>
+                <p data-i18n="staff_rep_desc" style="margin: 5px 0 0; opacity: 0.8;">إدارة البلاغات الحقيقية وتحديث حالاتها من المستودع</p>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for msg in messages %}
+        <div style="background: #2ecc71; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: bold;">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="table-container">
+            <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 20px;" data-i18n="staff_assigned_items">الأغراض المسندة إليك لإدارتها</h4>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="th_report_id">رقم البلاغ</th>
+                        <th data-i18n="th_rep_type">النوع</th>
+                        <th data-i18n="th_item_details">تفاصيل الغرض</th>
+                        <th data-i18n="th_location">الموقع</th>
+                        <th data-i18n="th_current_status">الحالة الحالية</th>
+                        <th data-i18n="th_update_action">الإجراء والتحديث</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in lost_items %}
+                    <tr>
+                        <td style="font-family: monospace;"><strong>#LST-{{ item.id }}</strong></td>
+                        <td><span class="status-badge" style="background:var(--danger);" data-i18n="label_lost_rep">مفقود</span></td>
+                        <td>{{ item.item_name }} <br><small style="color:gray;">الفئة: {{ item.category }}</small></td>
+                        <td><i class="fa-solid fa-location-dot" style="color: var(--secondary);"></i> {{ item.location }}</td>
+                        <td><span style="font-weight:bold; color:var(--primary);">{{ item.status }}</span></td>
+                        <td>
+                            <form action="{{ url_for('update_status', item_type='lost', item_id=item.id) }}" method="POST" style="margin: 0;">
+                                <select name="newStatus" class="status-update-select" required>
+                                    <option value="" disabled selected>-- تحديث الحالة --</option>
+                                    <option value="Searching">جاري البحث</option>
+                                    <option value="Found & Notified">تم العثور/إشعار المالك</option>
+                                    <option value="Delivered">تم التسليم</option>
+                                </select>
+                                <button type="submit" class="btn-save-update"><i class="fa-solid fa-check"></i> <span data-i18n="btn_save_update">حفظ</span></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for item in found_items %}
+                    <tr>
+                        <td style="font-family: monospace;"><strong>#FND-{{ item.id }}</strong></td>
+                        <td><span class="status-badge" style="background:var(--success);" data-i18n="label_found_rep">معثور عليه</span></td>
+                        <td>{{ item.item_name }} <br><small style="color:gray;">الفئة: {{ item.category }}</small></td>
+                        <td><i class="fa-solid fa-location-dot" style="color: var(--secondary);"></i> {{ item.location }}</td>
+                        <td><span style="font-weight:bold; color:var(--primary);">{{ item.status }}</span></td>
+                        <td>
+                            <form action="{{ url_for('update_status', item_type='found', item_id=item.id) }}" method="POST" style="margin: 0;">
+                                <select name="newStatus" class="status-update-select" required>
+                                    <option value="" disabled selected>-- تحديث الحالة --</option>
+                                    <option value="Stored">في المستودع</option>
+                                    <option value="Claimed">تم المطالبة</option>
+                                    <option value="Delivered">تم التسليم للمالك</option>
+                                </select>
+                                <button type="submit" class="btn-save-update"><i class="fa-solid fa-check"></i> <span data-i18n="btn_save_update">حفظ</span></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+</body>
+</html>

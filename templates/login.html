@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* إضافة ستايل بسيط للوجو عشان يطلع دائري ومرتب */
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid var(--secondary); /* تحديد ذهبي فخم */
+            overflow: hidden;
+        }
+
+            .logo-container img {
+                max-height: 70%;
+                width: auto;
+                border-radius: 5px;
+            }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="auth-page-wrapper">
+        <div class="top-buttons-auth">
+            <button class="top-btn-auth lang-toggle text-only">EN</button>
+        </div>
+
+        <div class="auth-box-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="color: #27ae60; margin-bottom: 15px; text-align: center; font-weight: bold; background: #e8f5e9; padding: 10px; border-radius: 8px;">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='logo.jpg') }}"
+                         onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';"
+                         alt="Logo">
+                </div>
+            </div>
+
+            <h3 data-i18n="auth_login_title" style="color: var(--primary); margin-bottom: 20px; font-weight: 800;">تسجيل الدخول للنظام</h3>
+
+            <form action="{{ url_for('login') }}" method="POST">
+
+                <div class="input-group">
+                    <label data-i18n="auth_email">البريد الإلكتروني</label>
+                    <input type="email" name="email" data-i18n="auth_email_ph" placeholder="example@airport.com" required autofocus>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="auth_pass">كلمة المرور</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="password" data-i18n="auth_pass_ph" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <div class="auth-links" style="margin-bottom: 20px;">
+                    <a href="{{ url_for('forgot_password') }}" data-i18n="auth_forgot">نسيت كلمة المرور؟</a>
+                </div>
+
+                <button type="submit" class="btn-primary-custom" data-i18n="auth_btn_login">دخول النظام</button>
+            </form>
+
+            <div class="auth-links" style="justify-content: center; margin-top: 15px;">
+                <a href="{{ url_for('register_user') }}" data-i18n="auth_create">ليس لديك حساب؟ سجل الآن</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+</body>
+</html>

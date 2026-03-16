@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Lost Reports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        .table-container {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            margin-top: 15px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .table-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-export {
+            background-color: #217346;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .btn-export:hover {
+                background-color: #1e5a37;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(33, 115, 70, 0.3);
+            }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: right;
+            min-width: 1000px;
+        }
+
+        body[data-lang="en"] .admin-table {
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            font-weight: 700;
+            border-bottom: 3px solid var(--secondary);
+        }
+
+            .admin-table th:first-child {
+                border-top-right-radius: 10px;
+            }
+
+            .admin-table th:last-child {
+                border-top-left-radius: 10px;
+            }
+
+        .admin-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: var(--dark);
+            vertical-align: middle;
+            transition: 0.2s;
+        }
+
+        .admin-table tr:hover td {
+            background-color: #f8fbfd;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .contact-phone {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        .contact-email {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            white-space: nowrap;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .status-found {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-not-found {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .delivery-done {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .delivery-not {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .btn-view {
+            background-color: var(--primary);
+        }
+
+        .btn-edit {
+            background-color: var(--secondary);
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        body.dark-mode .table-container {
+            background-color: #1A2235;
+            border: 1px solid #2C3E50;
+        }
+
+        body.dark-mode .admin-table td {
+            color: #E2E8F0;
+            border-bottom-color: #2C3E50;
+        }
+
+        body.dark-mode .admin-table tr:hover td {
+            background-color: #232d42;
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg" alt="Logo" class="logo-img">
+            <h2>Lost & Found<br><span style="font-size: 13px; color: white; font-weight:500;">Management System</span></h2>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('admin_dashboard') }}" data-i18n="nav_dash"></a></li>
+            <li><a href="{{ url_for('lost_reports_admin') }}" class="active" data-i18n="nav_lost"></a></li>
+            <li><a href="{{ url_for('found_reports_admin') }}" data-i18n="nav_found"></a></li>
+            <li><a href="{{ url_for('matches') }}" data-i18n="nav_matches"></a></li>
+            <li><a href="{{ url_for('staff_manage') }}" data-i18n="nav_staff"></a></li>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+            <li><a href="#" class="theme-toggle"><i class="fa-solid fa-moon"></i> الوضع الليلي</a></li>
+            <li><a href="#" class="lang-toggle"><i class="fa-solid fa-globe"></i> English</a></li>
+            <li><a href="{{ url_for('logout') }}" style="color: #ff7675;"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header class="admin-header">
+            <div>
+                <h2><i class="fa-solid fa-box-open" style="color: var(--danger);"></i> <span data-i18n="lost_admin_title">إدارة بلاغات المفقودات</span></h2>
+                <p data-i18n="lost_admin_desc">متابعة عمليات البحث وتسليم الأغراض المفقودة لأصحابها</p>
+            </div>
+        </header>
+
+        <div class="table-container">
+            <div class="table-header-bar">
+                <h4 style="color: var(--primary); font-weight: 800; margin: 0;" data-i18n="lost_table_title">سجل البلاغات الحالي</h4>
+                <button class="btn-export" onclick="exportTableToExcel('lostTable', 'Lost_Reports')">
+                    <i class="fa-solid fa-file-excel"></i> <span data-i18n="btn_export_excel">تصدير إلى Excel</span>
+                </button>
+            </div>
+
+            <table class="admin-table" id="lostTable">
+                <thead>
+                    <tr>
+                        <th data-i18n="th_report_id">رقم البلاغ</th>
+                        <th data-i18n="th_name">الاسم</th>
+                        <th data-i18n="th_contact">معلومات التواصل</th>
+                        <th data-i18n="th_lost_item">الغرض المفقود</th>
+                        <th data-i18n="th_location_date">المكان والتاريخ</th>
+                        <th data-i18n="th_status">حالة البحث</th>
+                        <th data-i18n="th_delivery">حالة التسليم</th>
+                        <th class="no-export" data-i18n="th_actions">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td><strong>#LST-{{ item.id }}</strong></td>
+                        <td style="font-weight: bold;">{{ item.reporter_name }}</td>
+                        <td>
+                            <div class="contact-info">
+                                <span class="contact-phone"><i class="fa-solid fa-phone"></i> {{ item.reporter_phone }}</span>
+                                <span class="contact-email"><i class="fa-solid fa-envelope"></i> {{ item.reporter_email }}</span>
+                            </div>
+                        </td>
+                        <td>{{ item.item_name }}<br><span style="font-size:12px; color:gray;">{{ item.category }}</span></td>
+                        <td>{{ item.location }}<br><span style="font-size:12px; color:gray;">{{ item.date_lost }}</span></td>
+
+                        <td>
+                            {% if item.status == 'Searching' %}
+                            <span class="status-badge status-not-found"><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="status_not_found_yet">جاري البحث</span></span>
+                            {% else %}
+                            <span class="status-badge status-found"><i class="fa-solid fa-check"></i> <span>تم العثور</span></span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if item.status == 'Delivered' %}
+                            <span class="status-badge delivery-done"><i class="fa-solid fa-check-double"></i> <span>تم التسليم</span></span>
+                            {% else %}
+                            <span class="status-badge delivery-not"><i class="fa-solid fa-xmark"></i> <span data-i18n="status_not_delivered">لم يتم التسليم</span></span>
+                            {% endif %}
+                        </td>
+
+                        <td class="no-export">
+                            <div class="action-btns">
+                                <button class="btn-icon btn-view"><i class="fa-solid fa-eye"></i></button>
+                                <button class="btn-icon btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 30px; font-weight: bold; color: gray;">
+                            لا توجد بلاغات مفقودات مسجلة في النظام حالياً.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+    <script>
+        function exportTableToExcel(tableID, filename = '') {
+            var tableSelect = document.getElementById(tableID);
+            var clonedTable = tableSelect.cloneNode(true);
+            var elementsToRemove = clonedTable.querySelectorAll('.no-export');
+            elementsToRemove.forEach(function (el) { el.parentNode.removeChild(el); });
+            var tableHTML = clonedTable.outerHTML.replace(/<br>/g, ' - ').replace(/ /g, '%20');
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            var downloadLink = document.createElement("a");
+            document.body.appendChild(downloadLink);
+            if (navigator.msSaveOrOpenBlob) {
+                var blob = new Blob(['\ufeff', tableHTML], { type: 'application/vnd.ms-excel' });
+                navigator.msSaveOrOpenBlob(blob, filename);
+            } else {
+                downloadLink.href = 'data:application/vnd.ms-excel;charset=utf-8,%EF%BB%BF' + tableHTML;
+                downloadLink.download = filename;
+                downloadLink.click();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+</head>
+<body data-lang="ar">
+
+    <div class="auth-page-wrapper">
+        <div class="top-buttons-auth">
+            <a href="{{ url_for('user_home') }}" class="top-btn-auth" title="الرئيسية"><i class="fa-solid fa-house"></i></a>
+            <button class="top-btn-auth lang-toggle text-only">EN</button>
+        </div>
+
+        <div class="auth-box-container" style="border-top-color: var(--danger);">
+            <i class="fa-solid fa-shield-halved" style="font-size: 50px; color: var(--danger); margin-bottom: 15px;"></i>
+            <h2 data-i18n="auth_reset_title" style="color: var(--primary); margin-bottom: 10px; font-weight: 800;">استعادة كلمة المرور</h2>
+            <p data-i18n="auth_reset_desc" style="color: gray; margin-bottom: 25px; font-size: 14px;">أدخل كلمة المرور الجديدة الخاصة بك أدناه.</p>
+
+            <form action="{{ url_for('login') }}">
+                <div class="input-group">
+                    <label data-i18n="auth_pass">كلمة المرور الجديدة</label>
+                    <div class="password-wrapper">
+                        <input type="password" data-i18n="auth_pass_ph" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="auth_pass_conf">تأكيد كلمة المرور</label>
+                    <div class="password-wrapper">
+                        <input type="password" data-i18n="auth_pass_ph" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary-custom" data-i18n="auth_btn_reset" style="background-color: var(--danger); border-color: var(--danger);">تحديث كلمة المرور</button>
+            </form>
+
+            <div class="auth-links" style="justify-content: center; margin-top: 15px;">
+                <a href="{{ url_for('login') }}" data-i18n="auth_remember">تذكرت كلمة المرور؟ تسجيل الدخول</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+</body>
+</html>

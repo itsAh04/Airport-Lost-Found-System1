@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="nav_staff_map">Staff Field Radar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* 🚨 تنسيق القائمة الجانبية لتكون متجاوبة (Responsive Sidebar) 🚨 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+            .sidebar ul {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                margin: 0;
+                padding: 0 0 20px 0;
+            }
+
+        .bottom-menu {
+            margin-top: auto; /* تدفع الأزرار للأسفل */
+        }
+
+        /* 🛠️ ربط الهيدر بالمتغيرات عشان يقلب بالدارك مود 🛠️ */
+        .admin-header {
+            background: var(--card-bg, white) !important;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-right: 6px solid var(--secondary);
+            transition: 0.3s;
+        }
+
+            .admin-header h2 {
+                color: var(--text-color, var(--primary)) !important;
+                font-weight: 800;
+                margin: 0;
+                font-size: 1.8rem;
+            }
+
+            .admin-header p {
+                color: var(--text-color, #64748b) !important;
+                margin: 5px 0 0;
+                font-weight: 500;
+                opacity: 0.8;
+            }
+
+        /* السايدبار */
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px; /* صغرت البادينج شوي عشان تلم الشاشة */
+            margin: 2px 10px;
+            border-radius: 12px;
+            transition: 0.3s;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+        }
+
+            .sidebar ul li a i {
+                font-size: 1.2rem;
+                width: 25px;
+                text-align: center;
+            }
+
+            .sidebar ul li a.active {
+                background-color: var(--secondary) !important;
+                color: var(--primary) !important;
+                font-weight: 800;
+            }
+
+        /* الرادار الميداني */
+        .radar-viewport {
+            width: 100%;
+            height: 600px;
+            background-color: #0b1120;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #1e293b;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .grid-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(30, 41, 59, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* المرافق */
+        .facility {
+            position: absolute;
+            text-align: center;
+            color: #94a3b8;
+            transition: 0.3s;
+        }
+
+            .facility i {
+                font-size: 30px;
+                margin-bottom: 8px;
+                filter: drop-shadow(0 0 5px rgba(255,255,255,0.1));
+            }
+
+            .facility span {
+                display: block;
+                font-size: 12px;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #64748b;
+            }
+
+        /* تنبيه الإنذار */
+        .radar-alert {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+        }
+
+        .ping {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 71, 87, 0.2);
+            border-radius: 50%;
+            border: 2px solid #ff4757;
+            animation: radar-pulse 2s infinite;
+            position: absolute;
+            top: -15px;
+            left: -15px;
+        }
+
+        .radar-alert i {
+            font-size: 50px;
+            color: #ff4757;
+            filter: drop-shadow(0 0 15px #ff4757);
+            position: relative;
+        }
+
+        .alert-label {
+            background: #ff4757;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 14px;
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 10px 20px rgba(255,71,87,0.4);
+        }
+
+        @keyframes radar-pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        /* لوحة العمليات السفلية */
+        .op-footer {
+            background: #1e293b;
+            border-top: 4px solid var(--secondary);
+            padding: 20px 30px;
+            border-radius: 0 0 25px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .op-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        .btn-action-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: not-allowed;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.5;
+        }
+
+            .action-btn.active {
+                background: var(--secondary);
+                color: var(--primary);
+                cursor: pointer;
+                opacity: 1;
+            }
+
+            .action-btn.done {
+                background: #2ecc71;
+                color: white;
+                opacity: 1;
+            }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';" alt="Logo" class="logo-img">
+            <h2><span data-i18n="staff_portal_title">بوابة الموظف</span><br><span style="font-size: 13px; color: rgba(255,255,255,0.6);">EMP-101</span></h2>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('staff_dashboard') }}" class="active" data-i18n="nav_staff_map"><i class="fa-solid fa-satellite-dish"></i> <span data-i18n="nav_staff_map_text">الرادار الميداني</span></a></li>
+            <li><a href="{{ url_for('staff_reports') }}"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="nav_staff_reports_text">إدارة البلاغات</span></a></li>
+
+            <div class="bottom-menu">
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+            <li><a href="#" class="theme-toggle"><i class="fa-solid fa-moon"></i> الوضع الليلي</a></li>
+            <li><a href="#" class="lang-toggle"><i class="fa-solid fa-globe"></i> English</a></li>
+            <li><a href="{{ url_for('staff_login') }}" style="color: #ff7675;"><i class="fa-solid fa-power-off"></i> <span data-i18n="btn_logout">تسجيل خروج</span></a></li>
+    </div>
+    </ul>
+    </div>
+
+    <div class="main-content">
+        <header class="admin-header">
+            <div>
+                <h2 data-i18n="staff_welcome_field">نظام التتبع الميداني المباشر</h2>
+                <p data-i18n="staff_map_desc">مراقبة فورية لموقع الموظف وحالات البلاغات الجديدة</p>
+            </div>
+        </header>
+
+        <div class="radar-viewport">
+            <div class="grid-bg"></div>
+
+            <div class="facility" style="top: 15%; left: 15%;"><i class="fa-solid fa-plane-departure"></i><span>Runway 01</span></div>
+            <div class="facility" style="top: 15%; left: 80%;"><i class="fa-solid fa-plane-arrival"></i><span>Runway 02</span></div>
+            <div class="facility" style="top: 45%; left: 48%; color: var(--secondary);"><i class="fa-solid fa-tower-observation"></i><span>Tower</span></div>
+            <div class="facility" style="top: 75%; left: 20%;"><i class="fa-solid fa-warehouse"></i><span>Storage A</span></div>
+            <div class="facility" style="top: 75%; left: 75%;"><i class="fa-solid fa-shop"></i><span>Duty Free</span></div>
+            <div class="facility" style="top: 35%; left: 25%;"><i class="fa-solid fa-door-open"></i><span>Gate 05</span></div>
+            <div class="facility" style="top: 35%; left: 70%;"><i class="fa-solid fa-door-open"></i><span>Gate 12</span></div>
+
+            <div class="radar-alert" id="liveAlert" style="top: 40%; left: 28%; display: none;">
+                <div class="ping"></div>
+                <i class="fa-solid fa-location-dot"></i>
+                <div class="alert-label">ALERT: GATE 05</div>
+            </div>
+        </div>
+
+        <div class="op-footer">
+            <div class="op-status" id="statusMsg">
+                <div class="status-dot"></div>
+                <span data-i18n="staff_idle">بانتظار مهام جديدة من النظام...</span>
+            </div>
+
+            <div class="btn-action-group">
+                <button class="action-btn" id="step1" onclick="handleStep(1)">
+                    <i class="fa-solid fa-route"></i> <span data-i18n="btn_heading">توجه للموقع</span>
+                </button>
+                <button class="action-btn" id="step2" onclick="handleStep(2)">
+                    <i class="fa-solid fa-hand-holding-box"></i> <span data-i18n="btn_picked">تم الاستلام</span>
+                </button>
+                <button class="action-btn" id="step3" onclick="handleStep(3)">
+                    <i class="fa-solid fa-box-archive"></i> <span data-i18n="btn_stored">تم الإيداع</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+    <script>
+        const audio = document.getElementById('alarmSound');
+        const alertBox = document.getElementById('liveAlert');
+        const msg = document.getElementById('statusMsg');
+
+        // محاكاة وصول بلاغ بعد 2 ثانية
+        setTimeout(() => {
+            let playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => { console.log("Audio playback prevented by browser."); });
+            }
+            alertBox.style.display = 'block';
+            msg.innerHTML = '<div class="status-dot" style="background:#ff4757"></div> <span style="color:#ff4757; font-weight:900">🚨 مهمة جديدة: حقيبة مفقودة في بوابة 05!</span>';
+            document.getElementById('step1').classList.add('active');
+        }, 2000);
+
+        function handleStep(step) {
+            if (step === 1) {
+                msg.innerHTML = '<div class="status-dot" style="background:var(--secondary)"></div> <span>جاري التوجه للموقع الآن...</span>';
+                document.getElementById('step1').classList.replace('active', 'done');
+                document.getElementById('step1').innerHTML = '<i class="fa-solid fa-check"></i> تم الوصول';
+                document.getElementById('step2').classList.add('active');
+            } else if (step === 2) {
+                msg.innerHTML = '<div class="status-dot" style="background:var(--secondary)"></div> <span>الغرض بحوزتك.. يرجى التوجه للمستودع A.</span>';
+                document.getElementById('step2').classList.replace('active', 'done');
+                document.getElementById('step2').innerHTML = '<i class="fa-solid fa-check"></i> تم الاستلام';
+                alertBox.style.left = '20%'; alertBox.style.top = '75%'; // تحريك الإنذار للمستودع
+                document.getElementById('step3').classList.add('active');
+            } else if (step === 3) {
+                msg.innerHTML = '<div class="status-dot" style="background:#2ecc71"></div> <span style="color:#2ecc71">تم إنهاء المهمة بنجاح وتأمين الغرض.</span>';
+                document.getElementById('step3').classList.replace('active', 'done');
+                alertBox.style.display = 'none';
+                setTimeout(() => { location.reload(); }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

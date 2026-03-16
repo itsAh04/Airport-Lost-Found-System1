@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* 🚨 تنسيق اللوجو الدائري الموحد 🚨 */
+        .logo-container {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid var(--secondary);
+            overflow: hidden;
+        }
+
+            .logo-container img {
+                max-height: 70%;
+                width: auto;
+            }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+        }
+
+            .otp-input:focus {
+                border-color: var(--secondary);
+                outline: none;
+                box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+            }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="auth-page-wrapper">
+        <div class="top-buttons-auth">
+            <a href="{{ url_for('login') }}" class="top-btn-auth"><i class="fa-solid fa-house"></i></a>
+        </div>
+
+        <div class="auth-box-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="color: red; margin-bottom: 15px; text-align: center; font-weight: bold;">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='logo.jpg') }}"
+                     onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';"
+                     alt="Logo">
+            </div>
+
+            <h2 data-i18n="auth_otp_title" style="color: var(--primary); font-weight: 800;">التحقق من البريد</h2>
+            <p data-i18n="auth_otp_desc" style="color: gray; margin-bottom: 20px; font-size: 14px;">أدخل الرمز المكون من 4 أرقام (1234)</p>
+
+            <form action="{{ url_for('otp') }}" method="POST">
+                <input type="hidden" name="hidden_name" value="{{ name }}">
+                <input type="hidden" name="hidden_email" value="{{ email }}">
+                <input type="hidden" name="hidden_password" value="{{ password }}">
+
+                <div class="otp-inputs" style="display: flex; gap: 5px; justify-content: center; margin-bottom: 25px;">
+                    <input type="text" name="otp1" maxlength="1" class="otp-input" autofocus required>
+                    <input type="text" name="otp2" maxlength="1" class="otp-input" required>
+                    <input type="text" name="otp3" maxlength="1" class="otp-input" required>
+                    <input type="text" name="otp4" maxlength="1" class="otp-input" required>
+                </div>
+
+                <button type="submit" class="btn-secondary-custom" style="width: 100%; background: var(--secondary); color: var(--primary); border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">تفعيل الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // التنقل التلقائي بين المربعات (UX)
+        const inputs = document.querySelectorAll('.otp-input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < inputs.length - 1) inputs[index + 1].focus();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && index > 0) inputs[index - 1].focus();
+            });
+        });
+    </script>
+</body>
+</html>

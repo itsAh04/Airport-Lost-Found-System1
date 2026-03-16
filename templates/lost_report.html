@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Lost Item - Lost & Found</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* =========================================
+            Soft UI Design (تصميم ناعم وفخم)
+        ========================================= */
+        body {
+            background-color: #f4f7f6;
+        }
+
+        .report-header {
+            background: linear-gradient(135deg, var(--primary), #2C3E50);
+            color: white;
+            padding: 70px 0 60px;
+            text-align: center;
+        }
+
+        .form-container {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            margin-top: -60px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 10;
+            border: none;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .section-title i {
+                color: var(--secondary);
+                font-size: 1.5rem;
+            }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid transparent;
+            background-color: #f0f3f5;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+            .form-control:focus, .form-select:focus {
+                background-color: var(--white);
+                border-color: var(--secondary);
+                box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+            }
+
+        body[data-lang="ar"] .form-label, body[data-lang="ar"] .form-control, body[data-lang="ar"] .form-select {
+            text-align: right;
+        }
+
+        body[data-lang="en"] .form-label, body[data-lang="en"] .form-control, body[data-lang="en"] .form-select {
+            text-align: left;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(26, 43, 76, 0.2);
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 25px rgba(26, 43, 76, 0.3);
+                background: var(--secondary);
+                color: var(--primary);
+            }
+
+        .btn-pdf {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.2);
+        }
+
+            .btn-pdf:hover {
+                transform: translateY(-3px);
+                background: #c0392b;
+                box-shadow: 0 12px 25px rgba(231, 76, 60, 0.3);
+            }
+
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: auto;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            margin: 0 5px;
+            font-size: 18px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+            .social-icons a:hover {
+                background: var(--secondary);
+                color: var(--primary);
+                transform: scale(1.1);
+            }
+
+        .navbar-container-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-img {
+            max-height: 50px;
+            width: auto;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .form-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <nav class="navbar navbar-expand-lg sticky-top bg-white shadow-sm no-print">
+        <div class="container navbar-container-custom">
+            <a class="navbar-brand d-flex align-items-center m-0" href="{{ url_for('user_home') }}">
+                <img src="{{ url_for('static', filename='logo.jpg') }}" onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';" alt="Logo" class="logo-img me-2 ms-2">
+                <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                    <span style="color: var(--primary); font-weight: 800; font-size: 1.1rem;">Lost & Found</span>
+                    <span style="color: gray; font-weight: 600; font-size: 0.7rem; letter-spacing: 1px;">MANAGEMENT SYSTEM</span>
+                </div>
+            </a>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="nav-link fw-bold" style="color: var(--primary); text-decoration:none;"><i class="fa-solid fa-user-circle"></i> <span data-i18n="my_profile">حسابي</span></a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm fw-bold" style="border-radius:8px; padding:8px 15px; text-decoration:none;" data-i18n="btn_logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج</a>
+                <button class="btn-secondary-custom text-only lang-toggle" style="padding: 8px 15px; width:auto; margin:0;">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="report-header">
+        <div class="container">
+            <h1 data-i18n="rep_lost_title" style="font-weight: 800;"><i class="fa-solid fa-search"></i> الإبلاغ عن مفقود</h1>
+            <p data-i18n="rep_lost_desc" class="no-print" style="opacity: 0.8; font-size: 1.1rem; margin-top: 10px;">يرجى تعبئة التفاصيل بدقة لمساعدة نظامنا في مطابقة مقتنياتك المفقودة.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow-1">
+        <div class="container">
+            <div class="form-container">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-center fw-bold mb-4" style="border-radius: 12px;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('submit_lost') }}" method="POST" enctype="multipart/form-data">
+
+                    <div class="section-title">
+                        <i class="fa-solid fa-address-card"></i>
+                        <span data-i18n="sec_personal">معلومات التواصل</span>
+                    </div>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_fullname">الاسم الكامل</label>
+                            <input type="text" name="reporterName" id="fullnameInput" class="form-control" data-i18n="ph_fullname" placeholder="أحمد محمد" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_email">البريد الإلكتروني</label>
+                            <input type="email" name="reporterEmail" class="form-control" data-i18n="ph_email" placeholder="example@airport.com" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_phone">رقم الهاتف</label>
+                            <input type="text" name="reporterPhone" id="phoneInput" class="form-control" data-i18n="ph_phone" placeholder="079XXXXXXX" maxlength="10" required>
+                        </div>
+                    </div>
+
+                    <div class="section-title">
+                        <i class="fa-solid fa-suitcase"></i>
+                        <span data-i18n="sec_lost_item">تفاصيل الغرض المفقود</span>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="lbl_item_name">اسم الغرض</label>
+                            <input type="text" name="itemName" class="form-control" data-i18n="ph_item_name" placeholder="مثال: محفظة جلد سوداء" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" data-i18n="lbl_category">فئة الغرض</label>
+                            <select name="category" class="form-select" required>
+                                <option value="" disabled selected data-i18n="opt_select_ph">---</option>
+                                <option value="Bags" data-i18n="cat_opt_bags">الحقائب والأمتعة</option>
+                                <option value="Electronics" data-i18n="cat_opt_elec">الإلكترونيات</option>
+                                <option value="Documents" data-i18n="cat_opt_docs">الوثائق الرسمية</option>
+                                <option value="Others" data-i18n="cat_opt_others">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" data-i18n="lbl_color">لون الغرض</label>
+                            <input type="color" name="color" class="form-control form-control-color w-100" style="padding: 5px; height: 50px; cursor: pointer;" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_location_lost">أين فقدته تقريباً؟</label>
+                            <select name="location" class="form-select" required>
+                                <option value="" disabled selected data-i18n="opt_select_ph">---</option>
+                                <option value="Terminal 1" data-i18n="loc_opt_1">مبنى الركاب 1 (Terminal 1)</option>
+                                <option value="Terminal 2" data-i18n="loc_opt_2">مبنى الركاب 2 (Terminal 2)</option>
+                                <option value="Security" data-i18n="loc_opt_3">نقطة التفتيش الأمني</option>
+                                <option value="Gates" data-i18n="loc_opt_4">بوابات المغادرة</option>
+                                <option value="DutyFree" data-i18n="loc_opt_5">السوق الحرة</option>
+                                <option value="NotSure" data-i18n="loc_opt_6">غير متأكد</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_date_lost">تاريخ الفقدان</label>
+                            <input type="date" name="dateLost" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" data-i18n="lbl_time">الوقت التقريبي</label>
+                            <input type="time" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <label class="form-label" data-i18n="lbl_desc">وصف إضافي</label>
+                            <textarea name="description" class="form-control" rows="4" data-i18n="ph_desc" placeholder="أي علامات مميزة..." required></textarea>
+                        </div>
+                        <div class="col-12 no-print">
+                            <label class="form-label" data-i18n="lbl_upload">إرفاق صورة (اختياري)</label>
+                            <input name="itemImage" class="form-control" type="file" accept="image/*" style="background: white;">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-5 no-print">
+                        <button type="submit" class="btn-submit" data-i18n="btn_submit_report"><i class="fa-solid fa-paper-plane"></i> إرسال البلاغ</button>
+                        <button type="button" class="btn-pdf" data-i18n="btn_export_pdf" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> تصدير كـ PDF</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="no-print text-center">
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';" alt="Logo" class="logo-img mb-3">
+            <h4 style="color: var(--secondary); font-weight: 800;">Lost & Found Management System</h4>
+            <div class="social-icons mb-4 mt-3">
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+            <p style="font-size: 14px; color: rgba(255,255,255,0.5);">© 2026 جميع الحقوق محفوظة - إدارة المفقودات</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+    <script>
+        document.getElementById('fullnameInput').addEventListener('input', function () {
+            this.value = this.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, '');
+        });
+        document.getElementById('phoneInput').addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+</body>
+</html>

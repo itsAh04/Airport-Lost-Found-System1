@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        /* 🚨 القياسات الذهبية لتوسيط الشاشة وجعلها فخمة 🚨 */
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+        }
+
+        .auth-page-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box-container {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            text-align: center;
+            position: relative;
+            border-top: 5px solid var(--secondary);
+        }
+
+        .input-group {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+            .input-group label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--dark);
+            }
+
+            .input-group input {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 12px 15px;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                background-color: #fcfcfc;
+                font-size: 15px;
+                transition: 0.3s;
+            }
+
+                .input-group input:focus {
+                    border-color: var(--secondary);
+                    outline: none;
+                    background-color: white;
+                    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
+                }
+
+        .btn-secondary-custom {
+            width: 100%;
+            background-color: var(--secondary);
+            color: var(--primary);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .btn-secondary-custom:hover {
+                background-color: #d35400;
+                color: white;
+            }
+
+        /* ستايل رسائل الخطأ */
+        .error-alert {
+            color: #e74c3c;
+            background: #fdeaea;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="auth-page-wrapper">
+        <div class="top-buttons-auth" style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;">
+            <a href="{{ url_for('login') }}" class="top-btn-auth" title="بوابة المسافرين"><i class="fa-solid fa-users"></i></a>
+            <button class="top-btn-auth lang-toggle text-only">EN</button>
+        </div>
+
+        <div class="auth-box-container">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="error-alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div style="background: var(--secondary); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);">
+                <i class="fa-solid fa-id-badge" style="font-size: 30px; color: var(--white);"></i>
+            </div>
+
+            <h2 data-i18n="auth_emp_title" style="color: var(--primary); margin-bottom: 25px; font-weight: 800;">بوابة الموظفين</h2>
+
+            <form action="{{ url_for('staff_login') }}" method="POST">
+                <div class="input-group">
+                    <label data-i18n="auth_emp_id">الرقم الوظيفي</label>
+                    <input type="text" id="empId" name="empId" data-i18n="auth_emp_id_ph" placeholder="مثال: 101" required autofocus>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="auth_pass">كلمة المرور</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="empPass" name="empPass" data-i18n="auth_pass_ph" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-secondary-custom" data-i18n="auth_btn_emp_login">دخول لمهامي</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+
+    <script>
+        // حافظنا على كود الـ Validation البروفيشنال تبعك عشان نمنع الحروف
+        document.addEventListener('DOMContentLoaded', function () {
+            const empIdInput = document.getElementById('empId');
+            if (empIdInput) {
+                empIdInput.addEventListener('input', function (e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="nav_staff">Admin - Staff Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <style>
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+            .sidebar ul {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                margin: 0;
+                padding: 0 0 20px 0;
+            }
+
+        .bottom-menu {
+            margin-top: auto;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            margin: 2px 10px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .sidebar ul li a.active {
+                background: var(--secondary);
+                color: var(--primary);
+                font-weight: bold;
+                border-radius: 10px;
+            }
+
+        .table-container {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            margin-top: 15px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .table-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-export, .btn-add {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export {
+            background-color: #217346;
+        }
+
+            .btn-export:hover {
+                background-color: #1e5a37;
+                transform: translateY(-2px);
+            }
+
+        .btn-add {
+            background-color: var(--primary);
+        }
+
+            .btn-add:hover {
+                background-color: #0f1a36;
+                transform: translateY(-2px);
+            }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: right;
+            min-width: 1200px;
+        }
+
+        body[data-lang="en"] .admin-table {
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: var(--dark);
+            color: white;
+            padding: 15px 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            font-weight: 700;
+            border-bottom: 3px solid var(--secondary);
+        }
+
+            .admin-table th:first-child {
+                border-top-right-radius: 10px;
+            }
+
+            .admin-table th:last-child {
+                border-top-left-radius: 10px;
+            }
+
+        .admin-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: var(--dark);
+            vertical-align: middle;
+            transition: 0.2s;
+        }
+
+        .admin-table tr:hover td {
+            background-color: #f8fbfd;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .contact-phone {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        .contact-email {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .login-credentials {
+            background: #f4f7f6;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px dashed #bdc3c7;
+            font-family: monospace;
+            font-size: 13px;
+            direction: ltr;
+            text-align: left;
+        }
+
+            .login-credentials span {
+                display: block;
+                color: var(--danger);
+                font-weight: bold;
+            }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            white-space: nowrap;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
+            transition: 0.3s;
+        }
+
+        .status-active {
+            background-color: var(--success);
+        }
+
+        .status-suspended {
+            background-color: #7f8c8d;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .btn-edit {
+            background-color: var(--secondary);
+        }
+
+        .btn-suspend {
+            background-color: var(--danger);
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            text-align: right;
+            border-top: 5px solid var(--primary);
+        }
+
+            .modal-box label {
+                font-weight: bold;
+                font-size: 14px;
+                margin-bottom: 8px;
+                display: block;
+                color: var(--dark);
+            }
+
+            .modal-box input, .modal-box select {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                margin-bottom: 15px;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+            .modal-actions button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+            }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+
+        body.dark-mode .table-container {
+            background-color: #1A2235;
+            border: 1px solid #2C3E50;
+        }
+
+        body.dark-mode .admin-table td {
+            color: #E2E8F0;
+            border-bottom-color: #2C3E50;
+        }
+
+        body.dark-mode .admin-table tr:hover td {
+            background-color: #232d42;
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" onerror="this.onerror=null; this.src='https://i.postimg.cc/MTQwFp6T/Whats-App-Image-2026-03-06-at-1-02-33-AM.jpg';" alt="Logo" class="logo-img">
+            <h2>Lost & Found<br><span style="font-size: 13px; color: white; font-weight:500;">Management System</span></h2>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('admin_dashboard') }}" data-i18n="nav_dash"></a></li>
+            <li><a href="{{ url_for('lost_reports_admin') }}" data-i18n="nav_lost"></a></li>
+            <li><a href="{{ url_for('found_reports_admin') }}" data-i18n="nav_found"></a></li>
+            <li><a href="{{ url_for('matches') }}" data-i18n="nav_matches"></a></li>
+            <li><a href="{{ url_for('staff_manage') }}" class="active" data-i18n="nav_staff"></a></li>
+
+            <div class="bottom-menu">
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+            <li><a href="#" class="theme-toggle"><i class="fa-solid fa-moon"></i> <span data-i18n="theme_dark">الوضع الليلي</span></a></li>
+            <li><a href="#" class="lang-toggle"><i class="fa-solid fa-globe"></i> English</a></li>
+            <li><a href="{{ url_for('logout') }}" style="color: #ff7675;"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج</a></li>
+    </div>
+    </ul>
+    </div>
+
+    <div class="main-content">
+        <header class="admin-header">
+            <div>
+                <h2><i class="fa-solid fa-users-gear" style="color: var(--dark);"></i> <span data-i18n="staff_title">إدارة الموظفين والصلاحيات</span></h2>
+                <p data-i18n="staff_desc">إضافة، تجميد، وتوزيع الموظفين (ببيانات دخول خاصة لكل موظف)</p>
+            </div>
+        </header>
+
+        <div class="table-container">
+            <div class="table-header-bar">
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn-add" id="openAddModalBtn"><i class="fa-solid fa-user-plus"></i> <span data-i18n="btn_add_staff">إضافة موظف جديد</span></button>
+                    <button class="btn-export" onclick="exportTableToExcel('staffTable', 'Staff_List')">
+                        <i class="fa-solid fa-file-excel"></i> <span data-i18n="btn_export_excel">تصدير إلى Excel</span>
+                    </button>
+                </div>
+            </div>
+
+            <table class="admin-table" id="staffTable">
+                <thead>
+                    <tr>
+                        <th data-i18n="th_staff_name">اسم الموظف</th>
+                        <th data-i18n="th_contact">معلومات التواصل</th>
+                        <th data-i18n="th_credentials">بيانات الدخول (ID & Pass)</th>
+                        <th data-i18n="th_role">المنصب / الصلاحية</th>
+                        <th data-i18n="th_zone">موقع التعيين</th>
+                        <th data-i18n="th_status">حالة الدوام</th>
+                        <th class="no-export" data-i18n="th_actions">تجميد / إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="staffTableBody">
+                    {% for staff in staff_list %}
+                    <tr>
+                        <td style="font-weight: bold;">{{ staff.fullname }}</td>
+                        <td>
+                            <div class="contact-info">
+                                <span class="contact-phone"><i class="fa-solid fa-phone"></i> {{ staff.phone if staff.phone else 'غير محدد' }}</span>
+                                <span class="contact-email"><i class="fa-solid fa-envelope"></i> {{ staff.email if staff.email else 'غير محدد' }}</span>
+                            </div>
+                        </td>
+                        <td><div class="login-credentials">ID: {{ staff.emp_id }}<br><span>Pass: 1234</span></div></td>
+                        <td><i class="fa-solid fa-shield-halved" style="color: var(--secondary);"></i> {{ staff.role if staff.role else 'موظف' }}</td>
+                        <td>متنقل (المطار)</td>
+                        <td><span class="status-badge status-active"><i class="fa-solid fa-circle-check"></i> على رأس عمله</span></td>
+                        <td class="no-export">
+                            <div class="action-btns">
+                                <button class="btn-icon btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-icon btn-suspend" onclick="toggleStatus(this)"><i class="fa-solid fa-ban"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px; font-weight: bold; color: gray;">
+                            لا يوجد موظفين مسجلين حالياً.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addStaffModal">
+        <div class="modal-box">
+            <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 800;"><i class="fa-solid fa-user-tie"></i> إضافة موظف جديد</h3>
+            <form id="addStaffForm" action="{{ url_for('add_staff') }}" method="POST">
+                <label>اسم الموظف الكامل</label>
+                <input type="text" name="staffName" id="staffNameInput" placeholder="مثال: خالد عبدالله" pattern="^[\u0600-\u06FFa-zA-Z\s]+$" title="أحرف عربية أو إنجليزية فقط" required>
+
+                <label>رقم الهاتف</label>
+                <input type="text" name="staffPhone" id="staffPhoneInput" placeholder="079XXXXXXX" pattern="\d{10}" maxlength="10" title="يجب أن يتكون من 10 أرقام" required>
+
+                <label>البريد الإلكتروني</label>
+                <input type="email" name="staffEmail" id="staffEmailInput" placeholder="employee@airport.com" required>
+
+                <label>المنصب</label>
+                <select name="staffRole" id="staffRoleInput" required>
+                    <option value="" disabled selected>--- اختر المنصب ---</option>
+                    <option value="موظف أمن">موظف أمن</option>
+                    <option value="موظف أمتعة">موظف أمتعة</option>
+                    <option value="فريق الاسترجاع">فريق الاسترجاع</option>
+                </select>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save"><i class="fa-solid fa-check"></i> حفظ الموظف</button>
+                    <button type="button" class="btn-cancel" id="closeModalBtn"><i class="fa-solid fa-times"></i> إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. فتح وإغلاق النافذة
+            const modal = document.getElementById('addStaffModal');
+            const openBtn = document.getElementById('openAddModalBtn');
+            const closeBtn = document.getElementById('closeModalBtn');
+
+            openBtn.addEventListener('click', () => modal.style.display = 'flex');
+            closeBtn.addEventListener('click', () => modal.style.display = 'none');
+
+            // منع الحروف والأرقام الخاطئة
+            const nameInput = document.getElementById('staffNameInput');
+            if (nameInput) {
+                nameInput.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, '');
+                });
+            }
+
+            const phoneInput = document.getElementById('staffPhoneInput');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+        });
+
+        // 3. برمجة زر تجميد الموظف
+        function toggleStatus(btn) {
+            let row = btn.closest('tr');
+            let badge = row.querySelector('.status-badge');
+
+            if (badge.classList.contains('status-active')) {
+                badge.classList.remove('status-active');
+                badge.classList.add('status-suspended');
+                badge.innerHTML = '<i class="fa-solid fa-ban"></i> موقوف عن العمل';
+                btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
+                btn.style.backgroundColor = '#2ecc71';
+            } else {
+                badge.classList.remove('status-suspended');
+                badge.classList.add('status-active');
+                badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> على رأس عمله';
+                btn.innerHTML = '<i class="fa-solid fa-ban"></i>';
+                btn.style.backgroundColor = 'var(--danger)';
+            }
+        }
+
+        function exportTableToExcel(tableID, filename = '') {
+            var tableSelect = document.getElementById(tableID);
+            var clonedTable = tableSelect.cloneNode(true);
+            var elementsToRemove = clonedTable.querySelectorAll('.no-export');
+            elementsToRemove.forEach(function (el) { el.parentNode.removeChild(el); });
+            var tableHTML = clonedTable.outerHTML.replace(/<br>/g, ' - ').replace(/ /g, '%20');
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            var downloadLink = document.createElement("a");
+            document.body.appendChild(downloadLink);
+            if (navigator.msSaveOrOpenBlob) {
+                var blob = new Blob(['\ufeff', tableHTML], { type: 'application/vnd.ms-excel' });
+                navigator.msSaveOrOpenBlob(blob, filename);
+            } else {
+                downloadLink.href = 'data:application/vnd.ms-excel;charset=utf-8,%EF%BB%BF' + tableHTML;
+                downloadLink.download = filename;
+                downloadLink.click();
+            }
+        }
+    </script>
+</body>
+</html>

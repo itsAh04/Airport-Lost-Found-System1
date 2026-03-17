@@ -1,22 +1,19 @@
 /* ====================================================================
-    🎨 ملف التنسيقات العالمي (Global CSS) - نظام المفقودات
-    تنبيه: التعديل هنا يغير شكل النظام بالكامل في جميع الصفحات (DRY)
+   👨‍🏫 ملف الجلوبل الأسطوري - Lost & Found System (النسخة الكاملة)
+   يحتوي على كافة التنسيقات والألوان لكل شاشات النظام
 ==================================================================== */
 
-/* -----------------------------------------------------------
-   1. الإعدادات الأساسية والمتغيرات (Base & Variables)
-   تعديل الألوان هنا يغير لون "كل" الأزرار والقوائم في الموقع
------------------------------------------------------------ */
+/* --- 1. الإعدادات الأساسية والمتغيرات (Base & Variables) --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
 
 :root {
-    --primary: #16264c; /* اللون الكحلي الأساسي */
-    --secondary: #e67e22; /* اللون البرتقالي/الذهبي */
+    --primary: #16264c;
+    --secondary: #e67e22;
     --dark: #2C3E50;
     --light-gray: #F8F9FA;
     --white: #FFFFFF;
-    --danger: #E74C3C; /* لون التنبيهات والمفقودات */
-    --success: #27AE60; /* لون المعثورات والمستودع */
+    --danger: #E74C3C;
+    --success: #27AE60;
     --font-en: 'Poppins', sans-serif;
     --font-ar: 'Tajawal', sans-serif;
 }
@@ -33,7 +30,6 @@ body {
     overflow-x: hidden;
 }
 
-    /* ضبط الخط والاتجاه حسب اللغة المختارة */
     body[data-lang="en"] {
         font-family: var(--font-en);
         direction: ltr;
@@ -44,10 +40,7 @@ body {
         direction: rtl;
     }
 
-/* -----------------------------------------------------------
-   2. العناصر المشتركة (Shared Components)
-   أزرار ولوجو تظهر في كافة واجهات النظام
------------------------------------------------------------ */
+/* --- 2. العناصر المشتركة (Shared Components) --- */
 .logo-img {
     width: 60px;
     height: auto;
@@ -91,10 +84,7 @@ body {
         transform: translateY(-2px);
     }
 
-/* -----------------------------------------------------------
-   3. قسم المسافر / واجهات الدخول (Passenger Section)
-   تنسيق شاشات (تسجيل الدخول، إنشاء الحساب، استعادة كلمة المرور)
------------------------------------------------------------ */
+/* --- 3. قسم المسافر وشاشات الدخول (Auth Screens) --- */
 .auth-page-wrapper {
     position: fixed !important;
     top: 0 !important;
@@ -120,7 +110,6 @@ body {
     position: relative !important;
 }
 
-/* تنسيق الحقول داخل شاشات الدخول */
 .input-group {
     text-align: right;
     margin-bottom: 20px;
@@ -139,7 +128,78 @@ body[data-lang="en"] .input-group {
     font-size: 14px;
 }
 
-/* قسم الـ OTP (التحقق من البريد) */
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+    .password-wrapper i {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #7f8c8d;
+        font-size: 18px;
+    }
+
+body[data-lang="ar"] .password-wrapper i {
+    left: 15px;
+    right: auto;
+}
+
+body[data-lang="en"] .password-wrapper i {
+    right: 15px;
+    left: auto;
+}
+
+.auth-links {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    width: 100%;
+}
+
+    .auth-links a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+.top-buttons-auth {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 100000;
+}
+
+body[data-lang="en"] .top-buttons-auth {
+    right: auto;
+    left: 20px;
+}
+
+.top-btn-auth {
+    color: white;
+    font-size: 24px;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-weight: bold;
+}
+
 .otp-inputs {
     display: flex;
     justify-content: center;
@@ -161,10 +221,28 @@ body[data-lang="en"] .input-group {
     outline: none;
 }
 
-/* -----------------------------------------------------------
-   4. قسم الإدارة والموظف (Admin & Staff Section)
-   تنسيق القائمة الجانبية، لوحة التحكم، والبطاقات الإحصائية
------------------------------------------------------------ */
+.timer-text {
+    color: var(--danger);
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 15px;
+    display: block;
+}
+
+.resend-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+    margin-bottom: 20px;
+    width: 100%;
+    text-decoration: underline;
+    font-size: 15px;
+}
+
+/* --- 4. قسم الإدارة والموظف (القائمة الجانبية ولوحة التحكم) --- */
 .sidebar {
     width: 260px;
     background: var(--primary);
@@ -195,26 +273,65 @@ body[data-lang="ar"] .sidebar {
     padding-bottom: 15px;
 }
 
-/* تأثير التظليل عند المرور على أزرار القائمة الجانبية */
-.sidebar ul li a {
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-    padding: 12px 15px;
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    font-size: 15px;
-    transition: 0.3s;
-}
-
-    .sidebar ul li a:hover, .sidebar ul li a.active {
-        background: #d4ac0d; /* اللون الذهبي عند التفعيل */
-        color: #16264c;
+    .sidebar-brand h2 {
+        font-size: 16px;
+        color: var(--secondary);
+        font-weight: 800;
+        margin: 10px 0 0 0;
     }
 
-/* البطاقات الإحصائية في لوحة التحكم */
+.sidebar ul {
+    list-style: none;
+}
+
+    .sidebar ul li a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        padding: 12px 15px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+        .sidebar ul li a i {
+            margin: 0 10px;
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background: #d4ac0d;
+            color: #16264c;
+        }
+
+.main-content {
+    padding: 30px;
+}
+
+body[data-lang="en"] .main-content {
+    margin-left: 260px;
+}
+
+body[data-lang="ar"] .main-content {
+    margin-right: 260px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -233,10 +350,23 @@ body[data-lang="ar"] .sidebar {
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-/* -----------------------------------------------------------
-   5. الرادار الميداني والخريطة (Staff Radar & Map)
-   خاص بالموظفين لمتابعة بلاغات المفقودات والمطابقات حياً
------------------------------------------------------------ */
+/* --- 5. الرادار الميداني والخريطة (Staff Radar) --- */
+.map-container {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    position: relative;
+    transition: all 0.3s;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .smart-map {
     width: 100%;
     height: 750px;
@@ -246,10 +376,47 @@ body[data-lang="ar"] .sidebar {
     background-color: #e8eaed;
     background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
     border: 3px solid #bdc3c7;
-    direction: ltr !important; /* لضمان ثبات إحداثيات الخريطة في كل اللغات */
+    direction: ltr !important;
 }
 
-/* تنسيق دبابيس الخريطة (Pins) */
+.map-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: var(--light-gray);
+}
+
+    .map-container.fullscreen .smart-map {
+        flex: 1;
+        height: auto;
+    }
+
+.close-map-btn {
+    display: none;
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.map-container.fullscreen .close-map-btn {
+    display: inline-block;
+}
+
+.map-container.fullscreen #expandMapBtn {
+    display: none;
+}
+
 .map-pin {
     position: absolute;
     display: flex;
@@ -259,7 +426,37 @@ body[data-lang="ar"] .sidebar {
     z-index: 10;
 }
 
-/* حركة النبض للمفقودات (Bounce Animation) */
+    .map-pin i.icon-pin {
+        font-size: 32px;
+        color: #7f8c8d;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .map-pin span.label {
+        background: white;
+        color: var(--primary);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid #bdc3c7;
+        margin-top: 2px;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+.pin-storage i.icon-pin {
+    color: var(--success) !important;
+    font-size: 45px !important;
+}
+
+.pin-storage span.label {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+    font-size: 13px;
+}
+
 .item-lost i.icon-pin {
     color: var(--danger);
     animation: bounce 1.5s infinite;
@@ -280,7 +477,6 @@ body[data-lang="ar"] .sidebar {
     }
 }
 
-/* حركة موظفي الأمن في الميدان */
 .security-staff {
     position: absolute;
     display: flex;
@@ -297,10 +493,107 @@ body[data-lang="ar"] .sidebar {
     border: 1px solid #f1c40f;
 }
 
-/* -----------------------------------------------------------
-   6. وضع القالب المظلم (Dark Mode)
-   يتم تفعيله عند الضغط على زر "الوضع الليلي" عبر الجافاسكربت
------------------------------------------------------------ */
+    .security-staff i {
+        color: #f1c40f;
+    }
+
+.sec-1 {
+    animation: patrol1 20s infinite alternate linear;
+}
+
+.sec-2 {
+    animation: patrol2 25s infinite alternate ease-in-out;
+}
+
+.sec-3 {
+    animation: patrol3 30s infinite alternate linear;
+}
+
+.sec-4 {
+    animation: patrol4 22s infinite alternate ease;
+}
+
+.sec-5 {
+    animation: patrol5 18s infinite alternate linear;
+}
+
+.sec-6 {
+    animation: patrol6 35s infinite alternate ease-in-out;
+}
+
+@keyframes patrol1 {
+    0% {
+        top: 20%;
+        left: 20%;
+    }
+
+    100% {
+        top: 20%;
+        left: 80%;
+    }
+}
+
+@keyframes patrol2 {
+    0% {
+        top: 40%;
+        left: 50%;
+    }
+
+    100% {
+        top: 60%;
+        left: 50%;
+    }
+}
+
+@keyframes patrol3 {
+    0% {
+        top: 80%;
+        left: 20%;
+    }
+
+    100% {
+        top: 80%;
+        left: 80%;
+    }
+}
+
+@keyframes patrol4 {
+    0% {
+        top: 65%;
+        left: 75%;
+    }
+
+    100% {
+        top: 50%;
+        left: 75%;
+    }
+}
+
+@keyframes patrol5 {
+    0% {
+        top: 65%;
+        left: 50%;
+    }
+
+    100% {
+        top: 65%;
+        left: 25%;
+    }
+}
+
+@keyframes patrol6 {
+    0% {
+        top: 90%;
+        left: 50%;
+    }
+
+    100% {
+        top: 90%;
+        left: 90%;
+    }
+}
+
+/* --- 6. القالب المظلم (Dark Mode) --- */
 body.dark-mode {
     background-color: #121620;
     color: #E2E8F0;
@@ -310,8 +603,7 @@ body.dark-mode {
         background: #0F131D;
     }
 
-    body.dark-mode .admin-header, body.dark-mode .stat-card,
-    body.dark-mode .map-container, body.dark-mode .auth-box-container {
+    body.dark-mode .admin-header, body.dark-mode .stat-card, body.dark-mode .map-container, body.dark-mode .auth-box-container {
         background-color: #1A2235;
         border-color: #2C3E50;
     }
